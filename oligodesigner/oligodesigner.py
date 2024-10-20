@@ -47,6 +47,7 @@ def generator(mFISH3D_param, oligominer_param, num_threads=1):
         else:
             pass
 
+
         # run blast
         df_blast = sequence.run_blast_df(oligominer_fasta, database, task='blastn-short', strand='plus', num_threads=num_threads)
 
@@ -55,8 +56,10 @@ def generator(mFISH3D_param, oligominer_param, num_threads=1):
 
         # Remove combination if sstart and send are close enough and if they are rective combination.
         oligo_to_be_removed = sequence.get_off_targeting_oligo(minimum_offtarget_gap, df_blast)
+        print("These sequences were removed because BLAST detected potential off-target binding", oligo_to_be_removed)
 
         oligo_df = sequence.remove_oligo(oligominer_df, oligo_to_be_removed)
+
     else:
         df_blast = sequence.run_blast_df(oligominer_fasta, database, task='blastn-short', strand='plus', num_threads=num_threads)
         oligo_to_be_removed = sequence.get_off_targeting_oligo(minimum_offtarget_gap, df_blast)

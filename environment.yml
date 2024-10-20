@@ -11,3 +11,4 @@ dependencies:
   - pip:
     - biopython==1.79
     - mygene==3.2.2
+    - openpyxl

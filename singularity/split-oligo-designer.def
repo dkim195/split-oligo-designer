@@ -1,0 +1,31 @@
+BootStrap: docker
+From: continuumio/miniconda3:4.12.0
+
+%environment
+	DEBIAN_FRONTEND=noninteractive
+
+%post
+	apt-get update
+	apt-get install --yes --no-install-recommends nano wget git openssh-client tar gzip ca-certificates
+	apt-get clean
+
+	# Install ncbi-blast
+	apt-get -y install ncbi-blast+
+
+	# enable conda during the build process
+	. /opt/conda/etc/profile.d/conda.sh
+
+	# install oligodesigner
+	cd /opt
+	git clone https://github.com/tatz-murakami/split-oligo-designer.git
+	cd split-oligo-designer
+	/opt/conda/bin/conda env create -f environment.yml
+	conda activate oligo
+	pip install .
+
+	# start 'oligo' env by default on container launch
+	echo ". /opt/conda/etc/profile.d/conda.sh" >> $SINGULARITY_ENVIRONMENT
+	echo "conda activate oligo" >> $SINGULARITY_ENVIRONMENT
+
+%runscript
+	jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='' --notebook-dir=/workdir
